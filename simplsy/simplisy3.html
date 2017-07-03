@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<script>
+    /**
+     * 简化对象表现形式
+     * @param str
+     * @example
+     * * - test
+     * - test[idx]
+     * - test[test1[idx]]
+     * - test["a"][idx]
+     * - xxx.test[a[a].test1[idx]]
+     * - test.xxx.a["asa"][test1[idx]]
+     * @return
+     * test
+     * test[idx]
+     * test[test1[idx]]
+     * test.a[idx]
+     * xxx.test[a[a].test1[idx]]
+     * test.xxx.a.asa[test1[idx]]
+     * 思路：
+     * 找最底层的'[',匹配']'---就近原则
+     */
+//    console.log(simplify('test'));
+//    console.log(simplify('test[idx]'));
+//    console.log(simplify('test[test1[idx]]'));
+//    console.log(simplify('test["a"][idx]'));
+    console.log(simplify('xxx.test[a[a].test1[idx]]'));
+//    console.log(simplify('test.xxx.a["asa"][test1[idx]]'));
+
+    function _unlock(str) {
+        var result = [];
+        var char,
+                child;
+        var i = 0;
+        //解构
+        for (; i < str.length; i++) {
+            char = str[i];
+            //如果是字符.||[||],就将符号前的单词存起来
+            if (char == '.' || char == '[' || char == ']') {
+                i !== 0 && result.push(str.splice(0, i).join(''));
+                str.shift();
+                i = -1;
+            }
+            //如果是字符[,进入子循环
+            if (char == '[') {
+                result.push(_unlock(str));
+            }//如果是字符],返回结果退出子循环
+            else if (char == ']') {
+                return result;
+            }
+        }
+        result.length || result.push(str.splice(0, i).join(''));
+        return result;
+    }
+    function simplify(str) {
+        console.log(str);
+        return _unlock(str.split(''));
+    }
+</script>
+</body>
+</html>
